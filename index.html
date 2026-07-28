@@ -3,501 +3,214 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sirius Imperium - Kripto & Teknik Analiz Portalı v2</title>
+    <title>Kripto Grafik Analiz Portalı</title>
     <style>
         :root {
-            --bg-primary: #0d1117;
-            --bg-secondary: #161b22;
-            --bg-card: #21262d;
-            --accent-blue: #58a6ff;
-            --accent-green: #3fb950;
-            --accent-red: #f85149;
-            --accent-gold: #d29922;
-            --text-main: #c9d1d9;
-            --text-heading: #ffffff;
-            --border: #30363d;
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-color: #f8fafc;
+            --accent-color: #10b981;
+            --accent-hover: #059669;
+            --border-color: #334155;
+            --error-color: #ef4444;
         }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
-        }
-
         body {
-            background-color: var(--bg-primary);
-            color: var(--text-main);
-            padding: 20px;
-            line-height: 1.5;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 16px;
+            display: flex;
+            justify-content: center;
         }
-
         .container {
-            max-width: 1200px;
-            margin: 0 auto;
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
         }
-
-        header {
-            text-align: center;
-            padding: 20px 0 30px 0;
-            border-bottom: 1px solid var(--border);
-            margin-bottom: 30px;
-        }
-
-        header h1 {
-            color: var(--accent-blue);
-            font-size: 2rem;
-            letter-spacing: 1px;
-            margin-bottom: 8px;
-        }
-
-        header p {
-            color: #8b949e;
-            font-size: 0.95rem;
-        }
-
-        .main-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 25px;
-        }
-
-        @media (max-width: 900px) {
-            .main-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
         .card {
-            background-color: var(--bg-secondary);
-            border: 1px solid var(--border);
+            background-color: var(--card-bg);
             border-radius: 12px;
-            padding: 24px;
+            padding: 16px;
+            border: 1px solid var(--border-color);
         }
-
-        .card-title {
-            color: var(--text-heading);
+        h2 {
+            margin-top: 0;
             font-size: 1.2rem;
-            margin-bottom: 16px;
+            color: #38bdf8;
             display: flex;
             align-items: center;
-            gap: 10px;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 10px;
+            gap: 8px;
         }
-
-        .upload-area {
-            border: 2px dashed var(--accent-blue);
-            border-radius: 8px;
-            padding: 30px;
-            text-align: center;
-            cursor: pointer;
-            background-color: rgba(88, 166, 255, 0.03);
-            transition: all 0.3s ease;
-        }
-
-        .upload-area:hover {
-            background-color: rgba(88, 166, 255, 0.08);
-            border-color: #79c0ff;
-        }
-
-        .upload-icon {
-            font-size: 40px;
-            margin-bottom: 10px;
-        }
-
-        input[type="file"] {
-            display: none;
-        }
-
-        .btn {
-            background-color: #238636;
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
+        input[type="text"] {
             width: 100%;
-            margin-top: 15px;
-            font-size: 1rem;
-            transition: background 0.2s;
-        }
-
-        .btn:hover {
-            background-color: #2ea043;
-        }
-
-        .btn:disabled {
-            background-color: #343942;
-            color: #6e7681;
-            cursor: not-allowed;
-        }
-
-        .preview-box {
-            margin-top: 15px;
-            text-align: center;
-            max-height: 250px;
-            overflow: hidden;
-            border-radius: 6px;
-            display: none;
-        }
-
-        .preview-box img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 6px;
-        }
-
-        .api-config {
-            margin-bottom: 20px;
-            background: var(--bg-card);
-            padding: 15px;
+            padding: 12px;
             border-radius: 8px;
-            border: 1px solid var(--border);
-        }
-
-        .api-config label {
-            display: block;
-            font-size: 0.85rem;
-            color: #8b949e;
-            margin-bottom: 6px;
-        }
-
-        .api-config input {
-            width: 100%;
-            padding: 8px 12px;
-            background: var(--bg-primary);
-            border: 1px solid var(--border);
-            color: var(--text-main);
-            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            background-color: #0f172a;
+            color: #fff;
+            box-sizing: border-box;
+            margin-bottom: 12px;
             font-size: 0.9rem;
         }
-
-        .cheat-sheet {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 15px;
-            margin-top: 30px;
-        }
-
-        .sheet-card {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
+        .upload-box {
+            border: 2px dashed var(--border-color);
             border-radius: 8px;
-            padding: 15px;
-        }
-
-        .sheet-card h3 {
-            color: var(--accent-gold);
-            font-size: 1rem;
-            margin-bottom: 10px;
-        }
-
-        .sheet-list {
-            list-style: none;
-            font-size: 0.88rem;
-        }
-
-        .sheet-list li {
-            padding: 4px 0;
-            border-bottom: 1px dashed var(--border);
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .sheet-list li:last-child {
-            border-bottom: none;
-        }
-
-        .tag-buy { color: var(--accent-green); font-weight: bold; }
-        .tag-sell { color: var(--accent-red); font-weight: bold; }
-        .tag-wait { color: var(--accent-gold); font-weight: bold; }
-
-        .result-box {
-            min-height: 200px;
-            white-space: pre-line;
-            font-size: 0.95rem;
-            line-height: 1.6;
-        }
-
-        .loading {
-            display: none;
-            text-align: center;
             padding: 20px;
-            color: var(--accent-blue);
+            text-align: center;
+            cursor: pointer;
+            background-color: #0f172a;
         }
-
-        .spinner {
-            border: 3px solid rgba(255,255,255,0.1);
-            border-radius: 50%;
-            border-top: 3px solid var(--accent-blue);
-            width: 30px;
-            height: 30px;
-            animation: spin 1s linear infinite;
-            margin: 10px auto;
+        .upload-box img {
+            max-width: 100%;
+            max-height: 250px;
+            border-radius: 6px;
+            margin-top: 10px;
         }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        button {
+            width: 100%;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 12px;
+        }
+        button:disabled {
+            background-color: #475569;
+            cursor: not-allowed;
+        }
+        #resultArea {
+            white-space: pre-wrap;
+            line-height: 1.5;
+            font-size: 0.95rem;
+        }
+        .error-msg {
+            color: var(--error-color);
+            background: rgba(239, 68, 68, 0.1);
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid var(--error-color);
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <header>
-        <h1>SIRIUS IMPERIUM - KRİPTO GRAFİK ANALİZ SİSTEMİ</h1>
-        <p>Grafik Görselinizi Yükleyin ve Dow Teorisi, Formasyonlar ve Mum Yapı Analizini Anında Alın</p>
-    </header>
-
-    <div class="main-grid">
-        <!-- SOL PANEL: YÜKLEME VE APİ -->
-        <div class="card">
-            <div class="card-title">
-                <span>📷 Grafik Yükleme</span>
-            </div>
-
-            <div class="api-config">
-                <label for="apiKey">Gemini API Anahtarınız (Vision Analizi İçin):</label>
-                <input type="password" id="apiKey" placeholder="AIzaSy...">
-                <small style="color: #8b949e; font-size: 0.75rem; display: block; margin-top: 4px;">
-                    * API Key doğrudan tarayıcınızdan Google API'sine iletilir, hiçbir sunucuya kaydedilmez.
-                </small>
-            </div>
-
-            <div class="upload-area" id="dropArea" onclick="document.getElementById('fileInput').click()">
-                <div class="upload-icon">📊</div>
-                <p><strong>Grafik Görselini Buraya Sürükleyin</strong></p>
-                <p style="font-size: 0.85rem; color: #8b949e; margin-top: 5px;">veya dosya seçmek için tıklayın (PNG, JPG, WEBP)</p>
-                <input type="file" id="fileInput" accept="image/*" onchange="handleFile(this.files[0])">
-            </div>
-
-            <div class="preview-box" id="previewBox">
-                <img id="imagePreview" src="" alt="Grafik Önizleme">
-            </div>
-
-            <button class="btn" id="analyzeBtn" onclick="analyzeChart()" disabled>Grafiği Analiz Et</button>
+    <div class="card">
+        <h2>📷 Grafik Yükleme & Analiz</h2>
+        
+        <input type="text" id="apiKey" placeholder="Gemini API Anahtarınızı Yapıştırın (AIzaSy...)" oninput="saveKey()">
+        
+        <div class="upload-box" onclick="document.getElementById('imageInput').click()">
+            <div>📊 Grafik Görselini Seçmek İçin Dokunun</div>
+            <input type="file" id="imageInput" accept="image/*" style="display:none" onchange="previewImage(event)">
+            <img id="preview" style="display:none;">
         </div>
 
-        <!-- SAĞ PANEL: ANALİZ SONUCU -->
-        <div class="card">
-            <div class="card-title">
-                <span>🎯 Analiz Raporu & Sinyal</span>
-            </div>
-
-            <div class="loading" id="loadingState">
-                <div class="spinner"></div>
-                <p>Grafik yapısı, trend, destek/direnç ve mum formasyonları inceleniyor...</p>
-            </div>
-
-            <div class="result-box" id="resultBox">
-                <p style="color: #8b949e; text-align: center; margin-top: 50px;">
-                    Sol taraftan bir grafik yükleyip "Grafiği Analiz Et" butonuna bastığınızda teknik analiz raporu burada oluşturulacaktır.
-                </p>
-            </div>
-        </div>
+        <button id="analyzeBtn" onclick="analyzeChart()">Grafiği Analiz Et</button>
     </div>
 
-    <!-- ALT BÖLÜM: BİLGİ KARTLARI VE KÜTÜPHANE -->
-    <h2 style="color: var(--text-heading); margin-top: 40px; margin-bottom: 15px; font-size: 1.3rem;">
-        📚 Dahili Strateji & Bilgi Rehberi (Grafiklerinizdeki Kurallar)
-    </h2>
-
-    <div class="cheat-sheet">
-        <div class="sheet-card">
-            <h3>📈 Trend & Dow Teorisi</h3>
-            <ul class="sheet-list">
-                <li><span>Daha Yüksek Tepe (DYT) + Dip (DYD)</span> <span class="tag-buy">Yükseliş Trendi</span></li>
-                <li><span>Daha Düşük Dip (DDD) + Tepe (DDT)</span> <span class="tag-sell">Düşüş Trendi</span></li>
-                <li><span>Likidite Avı (Sweep)</span> <span class="tag-wait">Kilit Bölge</span></li>
-                <li><span>Yatay Çizgi Kuralı</span> <span>En az 2 temas</span></li>
-            </ul>
-        </div>
-
-        <div class="sheet-card">
-            <h3>🟢 Güçlü Al Formasyonları</h3>
-            <ul class="sheet-list">
-                <li><span>Ters Omuz-Baş-Omuz (TOBO)</span> <span class="tag-buy">GÜÇLÜ AL</span></li>
-                <li><span>Çift Dip / Üçlü Dip</span> <span class="tag-buy">GÜÇLÜ AL</span></li>
-                <li><span>Düşen Kama / Yükselen Flama</span> <span class="tag-buy">AL</span></li>
-                <li><span>Diken Dip / Ters V Dönüşü</span> <span class="tag-buy">AL</span></li>
-            </ul>
-        </div>
-
-        <div class="sheet-card">
-            <h3>🔴 Güçlü Sat Formasyonları</h3>
-            <ul class="sheet-list">
-                <li><span>Omuz-Baş-Omuz (OBO)</span> <span class="tag-sell">GÜÇLÜ SAT</span></li>
-                <li><span>Çift Tepe / Üçlü Tepe</span> <span class="tag-sell">GÜÇLÜ SAT</span></li>
-                <li><span>Yükselen Kama / Yükselen Takoz</span> <span class="tag-sell">SAT</span></li>
-                <li><span>Düşen Flama / Düşen Üçgen</span> <span class="tag-sell">SAT</span></li>
-            </ul>
-        </div>
-
-        <div class="sheet-card">
-            <h3>🛡️ Risk Yönetimi (1:2 Kuralı)</h3>
-            <ul class="sheet-list">
-                <li><span>İşlem Başı Risk:</span> <span>%1 - %2</span></li>
-                <li><span>Kâr / Zarar Oranı (R:R):</span> <span>Minimum 1:2</span></li>
-                <li><span>Piyasa Kuralı:</span> <span>Disiplin & Sabır</span></li>
-                <li><span>Sermaye Kuralı:</span> <span>Önce Bakiyeyi Koruyun</span></li>
-            </ul>
-        </div>
+    <div class="card">
+        <h2>🎯 Analiz Raporu & Sinyal</h2>
+        <div id="resultArea">Henüz bir grafik analiz edilmedi. Ekran görüntüsü yükleyip "Grafiği Analiz Et" butonuna basınız.</div>
     </div>
 </div>
 
 <script>
-    let selectedBase64 = null;
-    let selectedMimeType = null;
+    let base64Image = "";
 
-    function handleFile(file) {
+    // API Key Yerel Depolama
+    window.onload = function() {
+        const savedKey = localStorage.getItem("gemini_api_key");
+        if(savedKey) document.getElementById("apiKey").value = savedKey;
+    }
+
+    function saveKey() {
+        const key = document.getElementById("apiKey").value.trim();
+        localStorage.setItem("gemini_api_key", key);
+    }
+
+    function previewImage(event) {
+        const file = event.target.files[0];
         if (!file) return;
-        
-        selectedMimeType = file.type;
-        const reader = new FileReader();
-        
-        reader.onload = function(e) {
-            const previewBox = document.getElementById('previewBox');
-            const imagePreview = document.getElementById('imagePreview');
-            const analyzeBtn = document.getElementById('analyzeBtn');
-            
-            imagePreview.src = e.target.result;
-            previewBox.style.display = 'block';
-            
-            selectedBase64 = e.target.result.split(',')[1];
-            analyzeBtn.disabled = false;
-        };
 
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const img = document.getElementById('preview');
+            img.src = e.target.result;
+            img.style.display = 'block';
+            
+            // Base64 dönüştürme
+            base64Image = e.target.result.split(',')[1];
+        };
         reader.readAsDataURL(file);
     }
 
-    const dropArea = document.getElementById('dropArea');
-    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-        dropArea.addEventListener(eventName, preventDefaults, false);
-    });
-
-    function preventDefaults (e) {
-        e.preventDefault();
-        e.stopPropagation();
-    }
-
-    dropArea.addEventListener('drop', (e) => {
-        const dt = e.dataTransfer;
-        const files = dt.files;
-        if (files.length > 0) {
-            handleFile(files[0]);
-        }
-    });
-
     async function analyzeChart() {
-        const apiKey = document.getElementById('apiKey').value.trim();
-        const resultBox = document.getElementById('resultBox');
-        const loadingState = document.getElementById('loadingState');
-        const analyzeBtn = document.getElementById('analyzeBtn');
+        const apiKey = document.getElementById("apiKey").value.trim();
+        const resultDiv = document.getElementById("resultArea");
+        const btn = document.getElementById("analyzeBtn");
 
         if (!apiKey) {
-            alert('Lütfen analiz yapabilmek için geçerli bir Gemini API Anahtarı girin.');
+            alert("Lütfen API Anahtarınızı girin!");
+            return;
+        }
+        if (!base64Image) {
+            alert("Lütfen bir grafik görseli seçin!");
             return;
         }
 
-        if (!selectedBase64) {
-            alert('Lütfen önce bir grafik görseli yükleyin.');
-            return;
-        }
+        resultDiv.innerHTML = "⏳ Grafik inceleniyor, Dow teorisi ve formasyonlar analiz ediliyor...";
+        btn.disabled = true;
 
-        loadingState.style.display = 'block';
-        resultBox.innerHTML = '';
-        analyzeBtn.disabled = true;
+        const systemPrompt = `Sen profesyonel bir Kripto Teknik Analiz Uzmanısın. Yüklenen grafiği detaylı incele ve Türkçe olarak şu başlıklarla analiz et:
+1. **Trend ve Dow Teorisi:** (Mevcut trend yönü, Yüksek Yüksekler/Düşük Düşükler yapısı)
+2. **Kritik Seviyeler:** (Grafikteki en belirgin Destek ve Direnç bölgeleri)
+3. **Formasyon ve Mum Analizi:** (Varsa ikili dip/tepe, flama, obo veya belirgin mum formasyonları)
+4. **Strateji ve 1:2 Risk/Ödül:** (Giriş seviyesi, Stop-Loss ve en az 1:2 Oranlı Take-Profit hedefi)
+5. **Sonuç / İşlem Sinyali:** (AL / SAT / BEKLE kararı ve kısa gerekçe)`;
 
-        const systemPrompt = `
-Sen uzman bir Kripto ve Teknik Analiz Asistanısın. Aşağıda belirtilen analiz kuralları ve not defteri bilgileri ışığında sana verilen grafik görselini analiz et:
+        const payload = {
+            contents: [{
+                parts: [
+                    { text: systemPrompt },
+                    {
+                        inline_data: {
+                            mime_type: "image/jpeg",
+                            data: base64Image
+                        }
+                    }
+                ]
+            }]
+        };
 
-GÖRSEL BİLGİ VE STRATEJİ KURALLARI:
-1. TREND VE DOW TEORİSİ:
-   - Yükseliş Trendi: Daha Yüksek Tepe (DYT) ve Daha Yüksek Dip (DYD).
-   - Düşüş Trendi: Daha Düşük Tepe (DDT) ve Daha Düşük Dip (DDD).
-   - Trend Dönüşü: Yükselişte tepe güncellenemez veya dip kırılırsa dönüş sinyalidir.
+        try {
+            // gemini-2.0-flash veya fallback olarak gemini-1.5-flash
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
 
-2. DESTEK & DİRENÇ / YATAY ÇİZGİLER:
-   - En az 2 kez tepki veren bölgelere çizilir.
-   - Desteğe yakın ALIM, Dirence yakın SATIM.
-   - Destek kırılırsa Dirence dönüşür, Direnç kırılırsa Desteğe dönüşür.
+            const data = await response.json();
 
-3. FORMASYONLAR:
-   - AL Sinyalleri: Çift Dip (W), Ters Üçlü Dip, Yükselen Flama, Yükselen Üçgen, Ters Omuz-Baş-Omuz (TOBO), Düşen Kama, Diken Dip.
-   - SAT Sinyalleri: Çift Tepe (M), Üçlü Tepe, Düşen Flama, Düşen Üçgen, Omuz-Baş-Omuz (OBO), Yükselen Takoz/Kama.
-   - BEKLE: Üçgen Sıkışma, Dikdörtgen Aralığı, Elmas Formasyonu, Asimetrik Üçgen (Kırılım beklenmeli).
-
-4. MUM YAPILARI & LİKİDİTE:
-   - Güçlü Yükseliş (%100): Üst üste dolgun yeşil/beyaz mumlar.
-   - Doji / Çapraz: Piyasa Kararsız, BEKLE.
-   - Likidite (Sweep): İğne atıp dönen bölgeler.
-
-5. RİSK YÖNETİMİ:
-   - Her işlemde %1-%2 Risk.
-   - Risk/Ödül Oranı (R:R) en az 1:2 olmalı.
-
-LÜTFEN ANALİZİ ŞU FORMATTA SUN:
-📌 **1. TESPİT EDİLEN TREND VE PİYASA YAPISI** (Dow Teorisine göre DYT, DYD, DDT, DDD analizi)
-📍 **2. DESTEK VE DİRENÇ BÖLGELERİ** (Kritik fiyat seviyeleri)
-📐 **3. FORMASYON VE MUM ANALİZİ** (Grafikte görünen özel yapılar)
-🎯 **4. İŞLEM STRATEJİSİ VE TAVSİYE (AL / SAT / BEKLE)**
-🛡️ **5. RİSK / ÖDÜL VE STOP-LOSS SEVİYELERİ** (Giriş, Stop Loss, Take Profit ve 1:2 R:R önerisi)
-`;
-
-        // Birden fazla güncel model ismi ile yedekli yapı
-        const modelsToTry = [
-            'gemini-1.5-flash-latest',
-            'gemini-1.5-pro-latest',
-            'gemini-1.5-flash',
-            'gemini-pro-vision'
-        ];
-
-        let success = false;
-
-        for (const model of modelsToTry) {
-            try {
-                const requestBody = {
-                    contents: [{
-                        parts: [
-                            { text: systemPrompt },
-                            {
-                                inline_data: {
-                                    mime_type: selectedMimeType || "image/png",
-                                    data: selectedBase64
-                                }
-                            }
-                        ]
-                    }]
-                };
-
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(requestBody)
-                });
-
-                const data = await response.json();
-
-                if (data.candidates && data.candidates[0].content.parts[0].text) {
-                    let textResult = data.candidates[0].content.parts[0].text;
-                    textResult = textResult.replace(/\*\*(.*?)\*\*/g, '<strong>$1$</strong>');
-                    resultBox.innerHTML = `<div style="white-space: pre-wrap;">${textResult}</div>`;
-                    success = true;
-                    break;
-                }
-            } catch (e) {
-                console.warn(`Model ${model} denenirken hata oluştu:`, e);
+            if (!response.ok) {
+                throw new Error(data.error?.message || "Bilinmeyen API hatası oluştu.");
             }
-        }
 
-        loadingState.style.display = 'none';
-        analyzeBtn.disabled = false;
+            const analysisText = data.candidates[0].content.parts[0].text;
+            resultDiv.innerText = analysisText;
 
-        if (!success) {
-            resultBox.innerHTML = `<p style="color: var(--accent-red);">Analiz yapılamadı. Lütfen API anahtarınızın doğru ve aktif olduğundan emin olun veya görseli tekrar yükleyin.</p>`;
+        } catch (error) {
+            resultDiv.innerHTML = `<div class="error-msg"><strong>❌ Hata Oluştu:</strong><br>${error.message}<br><br><small>İpucu: API anahtarınızı kopyalarken eksik/fazla karakter almadığınızdan emin olun.</small></div>`;
+        } finally {
+            btn.disabled = false;
         }
     }
 </script>
