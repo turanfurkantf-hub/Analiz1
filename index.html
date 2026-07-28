@@ -153,8 +153,8 @@
         const resultDiv = document.getElementById("resultArea");
         const btn = document.getElementById("analyzeBtn");
 
-        if (!apiKey) {
-            alert("Lütfen API Anahtarınızı girin!");
+        if (!apiKey || !apiKey.startsWith("AIzaSy")) {
+            alert("Lütfen 'AIzaSy' ile başlayan geçerli bir Google AI Studio API Anahtarı girin!");
             return;
         }
         if (!base64Image) {
@@ -162,7 +162,7 @@
             return;
         }
 
-        resultDiv.innerHTML = "⏳ Grafik inceleniyor, Dow teorisi ve formasyonlar analiz ediliyor...";
+        resultDiv.innerHTML = "⏳ Grafik inceleniyor, analiz ediliyor...";
         btn.disabled = true;
 
         const systemPrompt = `Sen profesyonel bir Kripto Teknik Analiz Uzmanısın. Yüklenen grafiği detaylı incele ve Türkçe olarak şu başlıklarla analiz et:
@@ -186,28 +186,35 @@
             }]
         };
 
-        try {
-            // gemini-1.5-flash modeline geçiş yapıldı (Free tier limit sorunu yaşamamak için)
-            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload)
-            });
+        // Otomatik model deneme sırası
+        const models = ["gemini-2.0-flash", "gemini-1.5-flash"];
+        let lastError = "";
 
-            const data = await response.json();
+        for (const model of models) {
+            try {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
 
-            if (!response.ok) {
-                throw new Error(data.error?.message || "Bilinmeyen API hatası oluştu.");
+                const data = await response.json();
+
+                if (response.ok && data.candidates && data.candidates[0]?.content?.parts[0]?.text) {
+                    resultDiv.innerText = data.candidates[0].content.parts[0].text;
+                    btn.disabled = false;
+                    return; // Başarılı olunca döngüden çık
+                } else {
+                    lastError = data.error?.message || "Model yanıt vermedi.";
+                }
+            } catch (err) {
+                lastError = err.message;
             }
-
-            const analysisText = data.candidates[0].content.parts[0].text;
-            resultDiv.innerText = analysisText;
-
-        } catch (error) {
-            resultDiv.innerHTML = `<div class="error-msg"><strong>❌ Hata Oluştu:</strong><br>${error.message}</div>`;
-        } finally {
-            btn.disabled = false;
         }
+
+        // İki model de başarısız olursa hatayı bas
+        resultDiv.innerHTML = `<div class="error-msg"><strong>❌ Hata Oluştu:</strong><br>${lastError}<br><br><small>Lütfen API anahtarınızı (AIzaSy...) kontrol edin.</small></div>`;
+        btn.disabled = false;
     }
 </script>
 
