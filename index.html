@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kripto Grafik Analiz Portalı (Groq Vision)</title>
+    <title>Kripto Grafik Analiz Portalı</title>
     <style>
         :root {
             --bg-color: #0f172a;
@@ -38,7 +38,7 @@
         h2 {
             margin-top: 0;
             font-size: 1.2rem;
-            color: #f59e0b;
+            color: #38bdf8;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -102,9 +102,9 @@
 
 <div class="container">
     <div class="card">
-        <h2>⚡ Groq Llama-3.2 Vision (Ücretsiz & Işık Hızında)</h2>
+        <h2>📷 Grafik Yükleme & Analiz (Gemini 2.0)</h2>
         
-        <input type="text" id="apiKey" placeholder="Groq API Key Yapıştırın (gsk_...)" oninput="saveKey()">
+        <input type="text" id="apiKey" placeholder="Yeni Gemini API Key Yapıştırın (AIzaSy...)" oninput="saveKey()">
         
         <div class="upload-box" onclick="document.getElementById('imageInput').click()">
             <div>📊 Grafik Görselini Seçmek İçin Dokunun</div>
@@ -123,27 +123,29 @@
 
 <script>
     let base64Image = "";
+    let mimeType = "image/jpeg";
 
     window.onload = function() {
-        const savedKey = localStorage.getItem("groq_api_key");
+        const savedKey = localStorage.getItem("gemini_2_key");
         if(savedKey) document.getElementById("apiKey").value = savedKey;
     }
 
     function saveKey() {
         const key = document.getElementById("apiKey").value.trim();
-        localStorage.setItem("groq_api_key", key);
+        localStorage.setItem("gemini_2_key", key);
     }
 
     function previewImage(event) {
         const file = event.target.files[0];
         if (!file) return;
 
+        mimeType = file.type || "image/jpeg";
         const reader = new FileReader();
         reader.onload = function(e) {
             const img = document.getElementById('preview');
             img.src = e.target.result;
             img.style.display = 'block';
-            base64Image = e.target.result;
+            base64Image = e.target.result.split(',')[1];
         };
         reader.readAsDataURL(file);
     }
@@ -153,8 +155,8 @@
         const resultDiv = document.getElementById("resultArea");
         const btn = document.getElementById("analyzeBtn");
 
-        if (!apiKey || !apiKey.startsWith("gsk_")) {
-            alert("Lütfen 'gsk_' ile başlayan geçerli bir Groq API Key girin!");
+        if (!apiKey) {
+            alert("Lütfen API Anahtarınızı girin!");
             return;
         }
         if (!base64Image) {
@@ -162,7 +164,7 @@
             return;
         }
 
-        resultDiv.innerHTML = "⚡ Groq Llama-3.2 Vision grafiği analiz ediyor...";
+        resultDiv.innerHTML = "⏳ Gemini 2.0 Flash grafiği analiz ediyor...";
         btn.disabled = true;
 
         const systemPrompt = `Sen profesyonel bir Kripto Teknik Analiz Uzmanısın. Yüklenen grafiği detaylı incele ve Türkçe olarak şu başlıklarla analiz et:
@@ -172,39 +174,38 @@
 4. **Strateji ve 1:2 Risk/Ödül:** (Giriş seviyesi, Stop-Loss ve en az 1:2 Oranlı Take-Profit hedefi)
 5. **Sonuç / İşlem Sinyali:** (AL / SAT / BEKLE kararı ve kısa gerekçe)`;
 
-        // Aktif tutulan güncel vision modeli
         const payload = {
-            model: "llama-3.2-90b-vision-preview",
-            messages: [
-                {
-                    role: "user",
-                    content: [
-                        { type: "text", text: systemPrompt },
-                        { type: "image_url", image_url: { url: base64Image } }
-                    ]
-                }
-            ],
-            temperature: 0.2
+            contents: [{
+                parts: [
+                    { text: systemPrompt },
+                    {
+                        inline_data: {
+                            mime_type: mimeType,
+                            data: base64Image
+                        }
+                    }
+                ]
+            }]
         };
 
         try {
-            const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+            // En güncel ve hızlı v1beta Gemini 2.0 Flash endpoint'i
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+            
+            const response = await fetch(url, {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${apiKey}`
-                },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload)
             });
 
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error(data.error?.message || "Groq API Bağlantı Hatası.");
+                throw new Error(data.error?.message || "Gemini API Hatası oluştu.");
             }
 
-            const analysisText = data.choices[0].message.content;
-            resultDiv.innerText = analysisText;
+            const textResult = data.candidates[0].content.parts[0].text;
+            resultDiv.innerText = textResult;
 
         } catch (error) {
             resultDiv.innerHTML = `<div class="error-msg"><strong>❌ Hata Oluştu:</strong><br>${error.message}</div>`;
