@@ -104,7 +104,7 @@
     <div class="card">
         <h2>📷 Grafik Yükleme & Analiz</h2>
         
-        <input type="text" id="apiKey" placeholder="AQ... ile başlayan API Anahtarınızı Yapıştırın" oninput="saveKey()">
+        <input type="text" id="apiKey" placeholder="API Anahtarınızı Yapıştırın (AQ...)" oninput="saveKey()">
         
         <div class="upload-box" onclick="document.getElementById('imageInput').click()">
             <div>📊 Grafik Görselini Seçmek İçin Dokunun</div>
@@ -121,7 +121,7 @@
     </div>
 </div>
 
-<!-- Yeni Resmi Google Gen AI SDK Modülü -->
+<!-- Resmi Google Gen AI SDK Modülü -->
 <script type="module">
     import { GoogleGenAI } from "https://esm.run/@google/genai";
 
@@ -167,7 +167,7 @@
             return;
         }
 
-        resultDiv.innerHTML = "⏳ Grafik inceleniyor, yeni SDK ile analiz ediliyor...";
+        resultDiv.innerHTML = "⏳ Grafik inceleniyor, Dow teorisi ve seviyeler analiz ediliyor...";
         btn.disabled = true;
 
         const systemPrompt = `Sen profesyonel bir Kripto Teknik Analiz Uzmanısın. Yüklenen grafiği detaylı incele ve Türkçe olarak şu başlıklarla analiz et:
@@ -178,11 +178,11 @@
 5. **Sonuç / İşlem Sinyali:** (AL / SAT / BEKLE kararı ve kısa gerekçe)`;
 
         try {
-            // Yeni SDK Başlatma
             const ai = new GoogleGenAI({ apiKey: apiKey });
 
+            // Ücretsiz katmanda yüksek kotalı gemini-1.5-flash modeli
             const response = await ai.models.generateContent({
-                model: 'gemini-2.0-flash',
+                model: 'gemini-1.5-flash',
                 contents: [
                     { text: systemPrompt },
                     {
