@@ -167,7 +167,7 @@
             return;
         }
 
-        resultDiv.innerHTML = "⏳ Grafik inceleniyor, Dow teorisi ve seviyeler analiz ediliyor...";
+        resultDiv.innerHTML = "⏳ Grafik inceleniyor, en uygun Flash modeli ile analiz ediliyor...";
         btn.disabled = true;
 
         const systemPrompt = `Sen profesyonel bir Kripto Teknik Analiz Uzmanısın. Yüklenen grafiği detaylı incele ve Türkçe olarak şu başlıklarla analiz et:
@@ -177,24 +177,48 @@
 4. **Strateji ve 1:2 Risk/Ödül:** (Giriş seviyesi, Stop-Loss ve en az 1:2 Oranlı Take-Profit hedefi)
 5. **Sonuç / İşlem Sinyali:** (AL / SAT / BEKLE kararı ve kısa gerekçe)`;
 
+        // Sırasıyla denenecek en hafif/en güncel Flash modeller
+        const candidateModels = [
+            'gemini-flash',
+            'gemini-1.5-flash-8b',
+            'gemini-2.0-flash-lite'
+        ];
+
+        let lastErrorMessage = "";
+
         try {
             const ai = new GoogleGenAI({ apiKey: apiKey });
 
-            // Ücretsiz katmanda yüksek kotalı gemini-1.5-flash modeli
-            const response = await ai.models.generateContent({
-                model: 'gemini-1.5-flash',
-                contents: [
-                    { text: systemPrompt },
-                    {
-                        inlineData: {
-                            mimeType: mimeType,
-                            data: base64Image
-                        }
-                    }
-                ]
-            });
+            for (const modelName of candidateModels) {
+                try {
+                    resultDiv.innerHTML = `⏳ Model deneniyor: <b>${modelName}</b>...`;
+                    
+                    const response = await ai.models.generateContent({
+                        model: modelName,
+                        contents: [
+                            { text: systemPrompt },
+                            {
+                                inlineData: {
+                                    mimeType: mimeType,
+                                    data: base64Image
+                                }
+                            }
+                        ]
+                    });
 
-            resultDiv.innerText = response.text;
+                    if (response && response.text) {
+                        resultDiv.innerText = response.text;
+                        btn.disabled = false;
+                        return; // Başarılı olunca çık
+                    }
+                } catch (err) {
+                    console.warn(`${modelName} başarısız oldu:`, err);
+                    lastErrorMessage = err.message;
+                }
+            }
+
+            // Hiçbiri çalışmazsa son hatayı göster
+            throw new Error(lastErrorMessage || "Hiçbir uygun Flash modeline erişilemedi.");
 
         } catch (error) {
             resultDiv.innerHTML = `<div class="error-msg"><strong>❌ Hata Oluştu:</strong><br>${error.message}</div>`;
