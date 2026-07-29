@@ -102,9 +102,9 @@
 
 <div class="container">
     <div class="card">
-        <h2>📷 Grafik Yükleme & Analiz (Gemini 2.0)</h2>
+        <h2>📷 Grafik Yükleme & Analiz (OpenRouter Free)</h2>
         
-        <input type="text" id="apiKey" placeholder="Yeni Gemini API Key Yapıştırın (AIzaSy...)" oninput="saveKey()">
+        <input type="text" id="apiKey" placeholder="OpenRouter API Key Yapıştırın (sk-or-...)" oninput="saveKey()">
         
         <div class="upload-box" onclick="document.getElementById('imageInput').click()">
             <div>📊 Grafik Görselini Seçmek İçin Dokunun</div>
@@ -126,13 +126,13 @@
     let mimeType = "image/jpeg";
 
     window.onload = function() {
-        const savedKey = localStorage.getItem("gemini_2_key");
+        const savedKey = localStorage.getItem("openrouter_key");
         if(savedKey) document.getElementById("apiKey").value = savedKey;
     }
 
     function saveKey() {
         const key = document.getElementById("apiKey").value.trim();
-        localStorage.setItem("gemini_2_key", key);
+        localStorage.setItem("openrouter_key", key);
     }
 
     function previewImage(event) {
@@ -156,7 +156,7 @@
         const btn = document.getElementById("analyzeBtn");
 
         if (!apiKey) {
-            alert("Lütfen API Anahtarınızı girin!");
+            alert("Lütfen OpenRouter API Anahtarınızı girin!");
             return;
         }
         if (!base64Image) {
@@ -164,7 +164,7 @@
             return;
         }
 
-        resultDiv.innerHTML = "⏳ Gemini 2.0 Flash grafiği analiz ediyor...";
+        resultDiv.innerHTML = "⏳ Yapay zeka grafiği analiz ediyor...";
         btn.disabled = true;
 
         const systemPrompt = `Sen profesyonel bir Kripto Teknik Analiz Uzmanısın. Yüklenen grafiği detaylı incele ve Türkçe olarak şu başlıklarla analiz et:
@@ -174,43 +174,51 @@
 4. Strateji ve 1:2 Risk/Ödül: (Giriş seviyesi, Stop-Loss ve en az 1:2 Oranlı Take-Profit hedefi)
 5. Sonuç / İşlem Sinyali: (AL / SAT / BEKLE kararı ve kısa gerekçe)`;
 
-        // Gemini API'nin kabul ettiği resmi JSON yapısı
+        // OpenRouter'ın tamamen ücretsiz, görsel destekli en güncel modeli: google/gemini-2.5-flash:free
         const payload = {
-            contents: [{
-                parts: [
-                    { text: "Lütfen ekteki kripto para grafiğini teknik analiz kurallarına göre analiz et." },
-                    {
-                        inlineData: {
-                            mimeType: mimeType,
-                            data: base64Image
+            model: "google/gemini-2.5-flash:free",
+            messages: [
+                {
+                    role: "system",
+                    content: systemPrompt
+                },
+                {
+                    role: "user",
+                    content: [
+                        {
+                            type: "text",
+                            text: "Lütfen ekteki kripto para grafiğini teknik analiz kurallarına göre detaylıca incele."
+                        },
+                        {
+                            type: "image_url",
+                            image_url: {
+                                url: `data:${mimeType};base64,${base64Image}`
+                            }
                         }
-                    }
-                ]
-            }],
-            systemInstruction: {
-                parts: [
-                    { text: systemPrompt }
-                ]
-            }
+                    ]
+                }
+            ]
         };
 
         try {
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+            const url = "https://openrouter.ai";
             
             const response = await fetch(url, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: { 
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${apiKey}`
+                },
                 body: JSON.stringify(payload)
             });
 
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error(data.error?.message || "Gemini API Hatası oluştu.");
+                throw new Error(data.error?.message || "OpenRouter API Hatası oluştu.");
             }
 
-            // Gelen veriyi güvenle yazdırma
-            const textResult = data.candidates[0].content.parts[0].text;
+            const textResult = data.choices[0].message.content;
             resultDiv.innerText = textResult;
 
         } catch (error) {
