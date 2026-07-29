@@ -162,7 +162,7 @@
             return;
         }
 
-        resultDiv.innerHTML = "⚡ Groq Llama-3.2 Vision grafiği yıldırım hızında analiz ediyor...";
+        resultDiv.innerHTML = "⚡ Groq Llama-3.2 Vision grafiği analiz ediyor...";
         btn.disabled = true;
 
         const systemPrompt = `Sen profesyonel bir Kripto Teknik Analiz Uzmanısın. Yüklenen grafiği detaylı incele ve Türkçe olarak şu başlıklarla analiz et:
@@ -172,8 +172,9 @@
 4. **Strateji ve 1:2 Risk/Ödül:** (Giriş seviyesi, Stop-Loss ve en az 1:2 Oranlı Take-Profit hedefi)
 5. **Sonuç / İşlem Sinyali:** (AL / SAT / BEKLE kararı ve kısa gerekçe)`;
 
+        // Aktif tutulan güncel vision modeli
         const payload = {
-            model: "llama-3.2-11b-vision-preview",
+            model: "llama-3.2-90b-vision-preview",
             messages: [
                 {
                     role: "user",
