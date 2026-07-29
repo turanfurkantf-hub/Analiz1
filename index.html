@@ -168,28 +168,33 @@
         btn.disabled = true;
 
         const systemPrompt = `Sen profesyonel bir Kripto Teknik Analiz Uzmanısın. Yüklenen grafiği detaylı incele ve Türkçe olarak şu başlıklarla analiz et:
-1. **Trend ve Dow Teorisi:** (Mevcut trend yönü, Yüksek Yüksekler/Düşük Düşükler yapısı)
-2. **Kritik Seviyeler:** (Grafikteki en belirgin Destek ve Direnç bölgeleri)
-3. **Formasyon ve Mum Analizi:** (Varsa ikili dip/tepe, flama, obo veya belirgin mum formasyonları)
-4. **Strateji ve 1:2 Risk/Ödül:** (Giriş seviyesi, Stop-Loss ve en az 1:2 Oranlı Take-Profit hedefi)
-5. **Sonuç / İşlem Sinyali:** (AL / SAT / BEKLE kararı ve kısa gerekçe)`;
+1. Trend ve Dow Teorisi: (Mevcut trend yönü, Yüksek Yüksekler/Düşük Düşükler yapısı)
+2. Kritik Seviyeler: (Grafikteki en belirgin Destek ve Direnç bölgeleri)
+3. Formasyon ve Mum Analizi: (Varsa ikili dip/tepe, flama, obo veya belirgin mum formasyonları)
+4. Strateji ve 1:2 Risk/Ödül: (Giriş seviyesi, Stop-Loss ve en az 1:2 Oranlı Take-Profit hedefi)
+5. Sonuç / İşlem Sinyali: (AL / SAT / BEKLE kararı ve kısa gerekçe)`;
 
+        // Gemini API'nin kabul ettiği resmi JSON yapısı
         const payload = {
             contents: [{
                 parts: [
-                    { text: systemPrompt },
+                    { text: "Lütfen ekteki kripto para grafiğini teknik analiz kurallarına göre analiz et." },
                     {
-                        inline_data: {
-                            mime_type: mimeType,
+                        inlineData: {
+                            mimeType: mimeType,
                             data: base64Image
                         }
                     }
                 ]
-            }]
+            }],
+            systemInstruction: {
+                parts: [
+                    { text: systemPrompt }
+                ]
+            }
         };
 
         try {
-            // En güncel ve hızlı v1beta Gemini 2.0 Flash endpoint'i
             const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
             
             const response = await fetch(url, {
@@ -204,6 +209,7 @@
                 throw new Error(data.error?.message || "Gemini API Hatası oluştu.");
             }
 
+            // Gelen veriyi güvenle yazdırma
             const textResult = data.candidates[0].content.parts[0].text;
             resultDiv.innerText = textResult;
 
