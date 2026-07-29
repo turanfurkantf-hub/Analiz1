@@ -145,13 +145,12 @@
             const img = document.getElementById('preview');
             img.src = e.target.result;
             img.style.display = 'block';
-            // DÜZELTİLEN SATIR: Görsel verisini doğru şekilde parçalayıp sadece Base64 kısmını alıyoruz
             base64Image = e.target.result.split(',')[1];
         };
         reader.readAsDataURL(file);
     }
 
-    async function analyzeChart() {
+    function analyzeChart() {
         const apiKey = document.getElementById("apiKey").value.trim();
         const resultDiv = document.getElementById("resultArea");
         const btn = document.getElementById("analyzeBtn");
@@ -200,33 +199,35 @@
             ]
         };
 
-        try {
-            const url = "https://openrouter.ai";
-            
-            const response = await fetch(url, {
-                method: "POST",
-                headers: { 
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${apiKey}`,
-                    "HTTP-Referer": window.location.origin
-                },
-                body: JSON.stringify(payload)
-            });
+        // Tarayıcı engellerini aşmak için kararlı XHR yapısı
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", "https://openrouter.ai", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.setRequestHeader("Authorization", "Bearer " + apiKey);
 
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.error?.message || "OpenRouter API Hatası oluştu.");
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4) {
+                btn.disabled = false;
+                if (xhr.status === 200) {
+                    try {
+                        const data = JSON.parse(xhr.responseText);
+                        const textResult = data.choices[0].message.content;
+                        resultDiv.innerText = textResult;
+                    } catch (e) {
+                        resultDiv.innerHTML = `<div class="error-msg"><strong>❌ Yanıt Çözümlenemedi:</strong><br>${e.message}</div>`;
+                    }
+                } else {
+                    try {
+                        const errData = JSON.parse(xhr.responseText);
+                        resultDiv.innerHTML = `<div class="error-msg"><strong>❌ Hata Oluştu (${xhr.status}):</strong><br>${errData.error?.message || "Bilinmeyen hata"}</div>`;
+                    } catch(e) {
+                        resultDiv.innerHTML = `<div class="error-msg"><strong>❌ Bağlantı Hatası:</strong><br>Tarayıcı isteği engelledi veya sunucuya ulaşılamadı. Sunucu Durumu: ${xhr.status}</div>`;
+                    }
+                }
             }
+        };
 
-            const textResult = data.choices[0].message.content;
-            resultDiv.innerText = textResult;
-
-        } catch (error) {
-            resultDiv.innerHTML = `<div class="error-msg"><strong>❌ Hata Oluştu:</strong><br>${error.message}</div>`;
-        } finally {
-            btn.disabled = false;
-        }
+        xhr.send(JSON.stringify(payload));
     }
 </script>
 
