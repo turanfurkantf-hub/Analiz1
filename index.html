@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kripto Grafik Analiz Portalı (Ücretsiz Hugging Face)</title>
+    <title>Kripto Grafik Analiz Portalı (Groq Vision)</title>
     <style>
         :root {
             --bg-color: #0f172a;
@@ -38,7 +38,7 @@
         h2 {
             margin-top: 0;
             font-size: 1.2rem;
-            color: #38bdf8;
+            color: #f59e0b;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -102,9 +102,9 @@
 
 <div class="container">
     <div class="card">
-        <h2>🤗 Hugging Face Grafik Analiz</h2>
+        <h2>⚡ Groq Llama-3.2 Vision (Ücretsiz & Işık Hızında)</h2>
         
-        <input type="text" id="apiKey" placeholder="Hugging Face Token Yapıştırın (hf_...)" oninput="saveKey()">
+        <input type="text" id="apiKey" placeholder="Groq API Key Yapıştırın (gsk_...)" oninput="saveKey()">
         
         <div class="upload-box" onclick="document.getElementById('imageInput').click()">
             <div>📊 Grafik Görselini Seçmek İçin Dokunun</div>
@@ -112,7 +112,7 @@
             <img id="preview" style="display:none;">
         </div>
 
-        <button id="analyzeBtn" onclick="analyzeChart()">Grafiği Analiz Et (Ücretsiz Qwen2-VL)</button>
+        <button id="analyzeBtn" onclick="analyzeChart()">Grafiği Analiz Et</button>
     </div>
 
     <div class="card">
@@ -125,13 +125,13 @@
     let base64Image = "";
 
     window.onload = function() {
-        const savedKey = localStorage.getItem("hf_api_key");
+        const savedKey = localStorage.getItem("groq_api_key");
         if(savedKey) document.getElementById("apiKey").value = savedKey;
     }
 
     function saveKey() {
         const key = document.getElementById("apiKey").value.trim();
-        localStorage.setItem("hf_api_key", key);
+        localStorage.setItem("groq_api_key", key);
     }
 
     function previewImage(event) {
@@ -153,8 +153,8 @@
         const resultDiv = document.getElementById("resultArea");
         const btn = document.getElementById("analyzeBtn");
 
-        if (!apiKey || !apiKey.startsWith("hf_")) {
-            alert("Lütfen 'hf_' ile başlayan geçerli bir Hugging Face Access Token girin!");
+        if (!apiKey || !apiKey.startsWith("gsk_")) {
+            alert("Lütfen 'gsk_' ile başlayan geçerli bir Groq API Key girin!");
             return;
         }
         if (!base64Image) {
@@ -162,7 +162,7 @@
             return;
         }
 
-        resultDiv.innerHTML = "⏳ Grafik açık kaynaklı Qwen2-VL yapay zekası ile analiz ediliyor...";
+        resultDiv.innerHTML = "⚡ Groq Llama-3.2 Vision grafiği yıldırım hızında analiz ediyor...";
         btn.disabled = true;
 
         const systemPrompt = `Sen profesyonel bir Kripto Teknik Analiz Uzmanısın. Yüklenen grafiği detaylı incele ve Türkçe olarak şu başlıklarla analiz et:
@@ -173,7 +173,7 @@
 5. **Sonuç / İşlem Sinyali:** (AL / SAT / BEKLE kararı ve kısa gerekçe)`;
 
         const payload = {
-            model: "Qwen/Qwen2-VL-7B-Instruct",
+            model: "llama-3.2-11b-vision-preview",
             messages: [
                 {
                     role: "user",
@@ -183,11 +183,11 @@
                     ]
                 }
             ],
-            max_tokens: 1000
+            temperature: 0.2
         };
 
         try {
-            const response = await fetch("https://api-inference.huggingface.co/v1/chat/completions", {
+            const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -199,7 +199,7 @@
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error(data.error || "Hugging Face API yanıt vermedi.");
+                throw new Error(data.error?.message || "Groq API Bağlantı Hatası.");
             }
 
             const analysisText = data.choices[0].message.content;
