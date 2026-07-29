@@ -145,6 +145,7 @@
             const img = document.getElementById('preview');
             img.src = e.target.result;
             img.style.display = 'block';
+            // DÜZELTİLEN SATIR: Görsel verisini doğru şekilde parçalayıp sadece Base64 kısmını alıyoruz
             base64Image = e.target.result.split(',')[1];
         };
         reader.readAsDataURL(file);
@@ -174,7 +175,6 @@
 4. Strateji ve 1:2 Risk/Ödül: (Giriş seviyesi, Stop-Loss ve en az 1:2 Oranlı Take-Profit hedefi)
 5. Sonuç / İşlem Sinyali: (AL / SAT / BEKLE kararı ve kısa gerekçe)`;
 
-        // OpenRouter'ın tamamen ücretsiz, görsel destekli en güncel modeli: google/gemini-2.5-flash:free
         const payload = {
             model: "google/gemini-2.5-flash:free",
             messages: [
@@ -207,7 +207,8 @@
                 method: "POST",
                 headers: { 
                     "Content-Type": "application/json",
-                    "Authorization": `Bearer ${apiKey}`
+                    "Authorization": `Bearer ${apiKey}`,
+                    "HTTP-Referer": window.location.origin
                 },
                 body: JSON.stringify(payload)
             });
